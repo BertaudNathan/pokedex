@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dresseur } from '../models/Dresseur'; // Assuming you have a type definition for Dresseur
-import SubmitButton from './buttons/submit'; // Import the SubmitButton component
-import CancelButton from './buttons/cancel'; // Import the CloseButton component
+import SubmitButton from './buttons/Submit'; // Import the SubmitButton component
+import CancelButton from './buttons/Cancel'; // Import the CloseButton component
 import Button from '@mui/material/Button';
 import { FormLabel } from '@mui/material';
 
