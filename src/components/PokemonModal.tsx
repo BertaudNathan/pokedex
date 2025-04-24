@@ -33,8 +33,8 @@ const PokemonModal: React.FC<PokemonModalProps> = ({ open, onClose, pokemon }) =
             <Typography>Génération : {pokemon.generation}</Typography>
             <Typography>Taille : {pokemon.height}</Typography>
             <Typography>Poids : {pokemon.weight}</Typography>
-            <Typography>Groupes d'œufs : {pokemon.egg_groups.join(', ')}</Typography>
-            <Typography>Genre : ♂ {pokemon.sexe.male}% / ♀ {pokemon.sexe.female}%</Typography>
+            <Typography>Groupes d'œufs : {pokemon.egg_groups?.join(', ')}</Typography>
+            <Typography>Genre : ♂ {pokemon.sexe?.male}% / ♀ {pokemon.sexe?.female}%</Typography>
             <Typography>Catch Rate : {pokemon.catch_rate}</Typography>
             <Typography>Exp. Level 100 : {pokemon.level_100}</Typography>
           </Grid>
@@ -42,7 +42,7 @@ const PokemonModal: React.FC<PokemonModalProps> = ({ open, onClose, pokemon }) =
           {/* Types */}
           <Grid>
             <Typography variant="subtitle1">Types</Typography>
-            {pokemon.types.map((type, idx) => (
+            {pokemon.types?.map((type, idx) => (
               <Chip key={idx} label={type.name} avatar={<Avatar src={type.image} />} style={{ marginRight: 5 }} />
             ))}
           </Grid>
@@ -50,7 +50,7 @@ const PokemonModal: React.FC<PokemonModalProps> = ({ open, onClose, pokemon }) =
           {/* Talents */}
           <Grid>
             <Typography variant="subtitle1">Talents</Typography>
-            {pokemon.talents.map((talent, idx) => (
+            {pokemon.talents?.map((talent, idx) => (
               <Typography key={idx}>
                 {talent.name} {talent.tc ? '(Talent caché)' : ''}
               </Typography>
@@ -60,17 +60,17 @@ const PokemonModal: React.FC<PokemonModalProps> = ({ open, onClose, pokemon }) =
           {/* Stats */}
           <Grid>
             <Typography variant="subtitle1">Stats</Typography>
-            {Object.entries(pokemon.stats).map(([stat, value]) => (
+            {pokemon.stats ? Object.entries(pokemon.stats).map(([stat, value]) => (
               <Typography key={stat}>
                 {stat.toUpperCase()} : {value}
               </Typography>
-            ))}
+            )) : "unknown"}
           </Grid>
 
           {/* Résistances */}
           <Grid>
             <Typography variant="subtitle1">Résistances</Typography>
-            {pokemon.resistances.map((res, idx) => (
+            {pokemon.resistances?.map((res, idx) => (
               <Typography key={idx}>
                 {res.name} : x{res.multiplier}
               </Typography>
@@ -81,11 +81,11 @@ const PokemonModal: React.FC<PokemonModalProps> = ({ open, onClose, pokemon }) =
           <Grid>
             <Typography variant="subtitle1">Évolutions</Typography>
             <Typography>Pré-évolution :</Typography>
-            {pokemon.evolution.pre.map((pre, idx) => (
+            {pokemon.evolution?.pre?.map((pre, idx) => (
               <Typography key={idx}>#{pre.pokedex_id} - {pre.name} ({pre.condition})</Typography>
             ))}
             <Typography>Évolution suivante :</Typography>
-            {pokemon.evolution.next.map((next, idx) => (
+            {pokemon.evolution?.next?.map((next, idx) => (
               <Typography key={idx}>#{next.pokedex_id} - {next.name} ({next.condition})</Typography>
             ))}
           </Grid>
