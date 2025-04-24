@@ -1,33 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
+import { useEffect, useState } from 'react'
+import LoginForm from './components/LoginForm'
+import TableauDresseurs from './components/TableauDresseurs'
+import { Dresseur } from './models/Dresseur'
+import NavBar from './components/nav/NavBar'
+import PokemonGrid from './components/PokemonGrid'
+import { Pokemon } from './models/Pokemon'
+import {useGetPokemons} from './hooks/useGetPokemons'
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [dresseurs, setDresseurs] = useState<Dresseur[]>(
+    JSON.parse(localStorage.getItem("dresseurs") || "[]")
+  )
+
+  // Rafraîchir quand le localStorage change dans un autre onglet
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setDresseurs(JSON.parse(localStorage.getItem("dresseurs") || "[]"))
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
+  // Optionnel : Si tu veux aussi détecter les changements de localStorage dans le même onglet
+  const updateDresseurs = () => {
+    const updated = JSON.parse(localStorage.getItem("dresseurs") || "[]")
+    setDresseurs(updated)
+  }
+  const { pokemons, loading, error } = useGetPokemons();
+
+  if (loading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur : {error}</div>;
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <NavBar onUpdate={updateDresseurs}/>
+      <PokemonGrid pokemons={pokemons} />
     </>
   )
 }
