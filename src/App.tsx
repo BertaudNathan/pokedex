@@ -7,6 +7,7 @@ import NavBar from './components/nav/NavBar'
 import PokemonGrid from './components/PokemonGrid'
 import { Pokemon } from './models/Pokemon'
 import {useGetPokemons} from './hooks/useGetPokemons'
+import { useGetPokemonsQuery } from './api/pokemonApi'
 function App() {
 
   const [dresseurs, setDresseurs] = useState<Dresseur[]>(
@@ -28,17 +29,17 @@ function App() {
     const updated = JSON.parse(localStorage.getItem("dresseurs") || "[]")
     setDresseurs(updated)
   }
-  const { pokemons, loading, error } = useGetPokemons();
+  const { data:pokemons, isLoading, isError } = useGetPokemonsQuery()
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>Erreur : {error}</div>;
+  if (isLoading) return <div>Chargement...</div>;
+  if (isError) return <div>Erreur : {isError}</div>;
 
   return (
     <>
     <NavBar onUpdate={updateDresseurs}/>
-      <PokemonGrid pokemons={pokemons} />
+      <PokemonGrid pokemons={pokemons || []} />
     </>
   )
-}
+} 
 
 export default App

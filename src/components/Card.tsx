@@ -3,7 +3,7 @@ import { Pokemon } from '../models/Pokemon';
 import { Card } from '@mui/material';
 import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
-import { red } from '@mui/material/colors';
+import { red,green } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
@@ -16,6 +16,12 @@ import { styled } from '@mui/material/styles';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LaunchIcon from '@mui/icons-material/Launch';
 import PokemonModal from './PokemonModal';
+import { RootState,AppDispatch } from '../store/store'; // ajuste le chemin si besoin
+import { useDispatch, useSelector } from 'react-redux';
+import { addPokemon, removePokemon } from '../store/slices/pokemon.slice';
+import Button from '@mui/material/Button';
+import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
+import { useNavigate } from 'react-router-dom';
 interface Card {
 
  pkmn : Pokemon;
@@ -54,17 +60,38 @@ const CardPokemon: React.FC<Card> = ({ pkmn }) => {
     const handleExpandClick = () => setExpanded(!expanded);
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
+const dispatch = useDispatch<AppDispatch>();
+const navigate = useNavigate();
+
+    const handleToggleCatch = () => {
+  if (isCaught) {
+    dispatch(removePokemon(pkmn.pokedex_id));
+  } else {
+    // On transforme le format si nécessaire pour respecter ton modèle dans le slice
+    dispatch(addPokemon(pkmn.pokedex_id));
+  }
+};
+
+      const isCaught = useSelector((state: RootState) =>
+  state.pokemon.pokemons.some(p=> p === pkmn.pokedex_id)
+);
     return (
     <Card sx={{ minWidth: 275 }}>
          <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        }       
-        title={pkmn.name.en}
-        subheader={`#${pkmn.pokedex_id}`}
+  avatar={
+    <Avatar
+      sx={{ bgcolor: isCaught ? green[700] : red[300] }}
+    >
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/2052px-Pok%C3%A9_Ball_icon.svg.png"
+        alt="pokeball"
+        style={{ width: 24, height: 24 }}
       />
+    </Avatar>
+  }
+  title={pkmn.name.en}
+  subheader={`#${pkmn.pokedex_id}`}
+/>
       <CardMedia
         component="img"
         height="194"
@@ -72,6 +99,7 @@ const CardPokemon: React.FC<Card> = ({ pkmn }) => {
         alt="pokemon image"
       />
       <CardContent>
+
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {pkmn.category}
         </Typography>
@@ -85,8 +113,18 @@ const CardPokemon: React.FC<Card> = ({ pkmn }) => {
         >
           <ArrowDropDownIcon />
         </ExpandMore>
-        <IconButton onClick={handleModalOpen} >
-          <LaunchIcon />
+        <IconButton  >
+
+          <LaunchIcon onClick={handleModalOpen}/>
+          <Button
+  variant={isCaught ? 'outlined' : 'contained'}
+  color={isCaught ? 'secondary' : 'primary'}
+  onDoubleClick={navigate(`/pokemon/${pkmn.pokedex_id}`)}
+
+  startIcon={<CatchingPokemonIcon />}
+>
+  {isCaught ? 'Libérer' : 'Attraper'}
+</Button>
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
